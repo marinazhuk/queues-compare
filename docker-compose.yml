@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+
+  redis-rdb:
+    image: redis:latest
+    ports:
+      - 6379:6379
+    volumes:
+      - ./.data/rdb:/data
+    entrypoint: redis-server --save 1 1 --maxmemory-policy allkeys-lfu
+
+  
+  redis-aof:
+    image: redis:latest
+    ports:
+      - 6380:6379
+    volumes:
+      - ./.data/aof:/data
+    entrypoint: redis-server --save "" --appendonly yes --maxmemory-policy allkeys-lfu
+
+  beanstalkd:
+    image: schickling/beanstalkd
+    volumes:
+      - ./.data/beanstalkd:/var/lib/beanstalkd
+    ports:
+      - 11300:11300
+
+volumes:
+  .data:
